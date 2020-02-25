@@ -12,13 +12,31 @@
 *  [x] signatures
 
 2. PUBLIC API
-*  [ ] handling datas
-*  [ ] deserialize the json structure
-*  [ ] 
+*  [x] request method
+*  [ ] typed request
+*  [ ] ticker
+*  [ ] order book
+*  [ ] transaction history
+*  [ ] btci
 
 3. PRIVATE API
-*  [ ] reqeust method
-*  [ ] 
+*  [x] request method
+*  [x] typed request
+INFO
+*  [x] account
+*  [ ] balance
+*  [ ] wallet_address
+*  [ ] ticker
+*  [ ] orders
+*  [ ] orders_detail(executed)
+*  [ ] transactions
+TRADE
+*  [ ] place 
+*  [ ] cancel
+*  [ ] market buy
+*  [ ] market sell
+*  [ ] withdrawal(coin)
+*  [ ] withdrawal(krw)
 
 ## Structures
 - Dealer

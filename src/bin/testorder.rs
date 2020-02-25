@@ -28,8 +28,6 @@ fn main(){
     let client = bithapi::rest::Client::new( std::env::var("BITHUMB_API").unwrap().as_str(), std::env::var("BITHUMB_SECRET").unwrap().as_str());
 
 
-    // info!("{:?}",chrono::Utc::now().timestamp_millis());
-
     let res = client.request(reqwest::Method::POST, "/info/balance", Some(json!({"currency":"XMR"})));
     if res.is_ok(){
         let response = res.unwrap();
@@ -37,6 +35,12 @@ fn main(){
     }else{
         error!("{:?}", res);
     }
+
+    // account info
+    let res = client.account(rest::AccountParam{order_currency:String::from("XMR"), ..Default::default()});
+    info!("{:?}", res);
+
+    //
 
     // threadpool
     

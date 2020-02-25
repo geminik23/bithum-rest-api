@@ -34,5 +34,23 @@ pub enum RestError {
     NotFound(u16, Option<BithResponse>), //404 .. if not found order when deleting
 }
 
+pub type RestTypedResult<T> = Result<T, RestError>;
 
 
+//========================================= API args
+
+#[derive(Clone, Debug, Serialize, Default)]
+pub struct AccountParam{
+    pub order_currency:String,
+    pub payment_currency:Option<String>,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+pub struct AccountResponse{
+    pub created:String, //integer
+    pub account_id:String,
+    pub order_currency:String,
+    pub payment_currency:String,
+    pub trade_fee:String, //number
+    pub balance:String, //number
+}

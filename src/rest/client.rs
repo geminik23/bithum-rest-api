@@ -81,6 +81,30 @@ impl Client{
         // Connection Error
         Err(RestError::ConnectionError)
     }
+
+
+    pub fn post_typed<T>(&self, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<T> where T:DeserializeOwned {
+        return self.request_typed::<T>(reqwest::Method::POST, endpoint, params);
+    }
+
+    pub fn request_typed<T>(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<T> where T:DeserializeOwned {
+        let result = self.request(method, endpoint, params);
+        match result {
+            Ok(res)=>{
+                if let Some(data) = res.data{
+                    if let Ok(result_) = serde_json::from_value::<T>(data){
+                        return Ok(result_);
+                    }
+                }
+                error!("no data in success response");
+                return Err(RestError::JsonParseError);
+            },
+            Err(why)=>{ return Err(why)},
+        }
+    }
+
+
+
     pub fn request(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> Result<BithResponse, RestError> {
         let mut ourl = self.url.clone().join(endpoint).expect("failed to join endpoint");
         let _url = ourl.clone();
@@ -153,6 +177,15 @@ impl Client{
         // Connection Error
         Err(RestError::ConnectionError)
     }
+
+
+    /// PRIVATE APIs
+    /// 
+    pub fn account(&self, param:AccountParam)->RestTypedResult<AccountResponse>{
+        self.post_typed("/info/account", Some(serde_json::to_value(param).unwrap()))
+    }
+    
+
 
 }
 
