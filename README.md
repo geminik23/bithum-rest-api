@@ -6,6 +6,7 @@
 1. Base
 *  [x] testing the public api request 
 *  [x] error parsing only rest error
+*  [x] rearrange modules
 *  [ ] encode the apikeys inside the new method. (use base64)
 *  [ ]
 
