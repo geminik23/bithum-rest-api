@@ -3,12 +3,15 @@
 extern crate env_logger;
 extern crate dotenv;
 extern crate reqwest;
+#[macro_use]
 extern crate serde_json;
 extern crate anyhow;
 //https://apidocs.bithumb.com/docs/ticker
 
 
 use bithapi::*;
+
+
 
 fn main(){
     let _ = dotenv::dotenv();
@@ -23,7 +26,11 @@ fn main(){
 
     
     let client = bithapi::rest::Client::new( std::env::var("BITHUMB_API").unwrap().as_str(), std::env::var("BITHUMB_SECRET").unwrap().as_str());
-    let res = client.request(reqwest::Method::POST, "info/account");
+
+
+    // info!("{:?}",chrono::Utc::now().timestamp_millis());
+
+    let res = client.request(reqwest::Method::POST, "/info/balance", Some(json!({"currency":"XMR"})));
     if res.is_ok(){
         let response = res.unwrap();
         info!("account info : {:?}", response.data);
@@ -33,8 +40,6 @@ fn main(){
 
     // threadpool
     
-
-
 
     
 

@@ -7,10 +7,13 @@ use crate::authenticate::*;
 
 
 #[derive(Clone, Deserialize, Debug)]
-pub  struct BithResponse{
+pub struct BithResponse{
     pub status:String,
-    pub data:serde_json::Value,
+    pub data:Option<serde_json::Value>,
+    pub message:Option<String>,
 }
+
+
 
 pub struct Client{
     pub url:reqwest::Url,
@@ -23,12 +26,12 @@ pub enum RestError {
     ConnectionError,
     JsonParseError,
     ModelParseError,
-    Error(u16),
-    Unknown(u16),
-    ParameterError(u16), //400
-    Unauthorized(u16), //401
-    AccessDenied(u16), //403
-    NotFound(u16), //404 .. if not found order when deleting
+    Error(u16, Option<BithResponse>),
+    Unknown(u16, Option<BithResponse>),
+    ParameterError(u16, Option<BithResponse>), //400
+    Unauthorized(u16, Option<BithResponse>), //401
+    AccessDenied(u16, Option<BithResponse>), //403
+    NotFound(u16, Option<BithResponse>), //404 .. if not found order when deleting
 }
 
 

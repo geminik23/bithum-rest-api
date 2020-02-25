@@ -7,8 +7,9 @@
 *  [x] testing the public api request 
 *  [x] error parsing only rest error
 *  [x] rearrange modules
-*  [ ] encode the apikeys inside the new method. (use base64)
-*  [ ]
+*  [x] encode the apikeys inside the new method. (use base64) : no base64..
+*  [x] request for public and private
+*  [x] signatures
 
 2. PUBLIC API
 *  [ ] handling datas
