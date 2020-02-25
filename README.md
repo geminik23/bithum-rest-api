@@ -27,16 +27,18 @@ INFO
 *  [ ] balance
 *  [ ] wallet_address
 *  [ ] ticker
-*  [ ] orders
+*  [x] orders
 *  [ ] orders_detail(executed)
 *  [ ] transactions
 TRADE
-*  [ ] place 
-*  [ ] cancel
+*  [x] place 
+*  [x] cancel
 *  [ ] market buy
 *  [ ] market sell
 *  [ ] withdrawal(coin)
 *  [ ] withdrawal(krw)
+
+4. Websocket API
 
 ## Structures
 - Dealer

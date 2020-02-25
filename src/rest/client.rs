@@ -83,11 +83,19 @@ impl Client{
     }
 
 
-    pub fn post_typed<T>(&self, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<T> where T:DeserializeOwned {
-        return self.request_typed::<T>(reqwest::Method::POST, endpoint, params);
+    pub fn post_typed_data<T>(&self, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<T> where T:DeserializeOwned {
+        return self.request_typed_data::<T>(reqwest::Method::POST, endpoint, params);
     }
 
-    pub fn request_typed<T>(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<T> where T:DeserializeOwned {
+    pub fn post_typed_order_id(&self, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<String> {
+        return self.request_typed_order_id(reqwest::Method::POST, endpoint, params);
+    }
+
+    pub fn post_typed_empty(&self, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<()> {
+        return self.request_typed_empty(reqwest::Method::POST, endpoint, params);
+    }
+
+    pub fn request_typed_data<T>(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<T> where T:DeserializeOwned {
         let result = self.request(method, endpoint, params);
         match result {
             Ok(res)=>{
@@ -98,6 +106,30 @@ impl Client{
                 }
                 error!("no data in success response");
                 return Err(RestError::JsonParseError);
+            },
+            Err(why)=>{ return Err(why)},
+        }
+    }
+
+    pub fn request_typed_order_id(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<String> {
+        let result = self.request(method, endpoint, params);
+        match result {
+            Ok(res)=>{
+                if let Some(data) = res.order_id{
+                    return Ok(data);
+                }
+                error!("no data in success response");
+                return Err(RestError::JsonParseError);
+            },
+            Err(why)=>{ return Err(why)},
+        }
+    }
+
+    pub fn request_typed_empty(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<()> {
+        let result = self.request(method, endpoint, params);
+        match result {
+            Ok(res)=>{
+                return Ok(());
             },
             Err(why)=>{ return Err(why)},
         }
@@ -129,7 +161,6 @@ impl Client{
         }
 
         let sign = self.auth.signature(endpoint, nonce, &query).unwrap();
-        info!("signature {:?}", sign);
 
 
 
@@ -139,7 +170,7 @@ impl Client{
         .header("Api-Sign", sign.as_str())
         .header("Api-Nonce", format!("{}",nonce).as_str())
         .header(reqwest::header::CONTENT_TYPE, "application/x-www-form-urlencoded")
-        // .header("user-agent", "bithapi-rs")
+        .header("user-agent", "bithapi-rs")
         .send(){
             let code = response.status().as_u16();
             let mut body :Option<BithResponse> = None;
@@ -164,7 +195,11 @@ impl Client{
                     }
                 },
                 200=>{
+                    let arg = body.clone();
                     if let Some(res) = body{
+                        if res.message.is_some(){
+                            return Err(RestError::BithumbError(0, arg));
+                        }
                         return Ok(res);
                     }
                 },
@@ -182,8 +217,23 @@ impl Client{
     /// PRIVATE APIs
     /// 
     pub fn account(&self, param:AccountParam)->RestTypedResult<AccountResponse>{
-        self.post_typed("/info/account", Some(serde_json::to_value(param).unwrap()))
+        self.post_typed_data("/info/account", Some(serde_json::to_value(param).unwrap()))
     }
+
+    pub fn orders(&self, param:OrdersParam)-> RestTypedResult<OrdersResponse>{
+        self.post_typed_data("/info/orders", Some(serde_json::to_value(param).unwrap()))
+    }
+
+    pub fn trade_place(&self, param:PlaceParam)-> RestTypedResult<String>{
+        self.post_typed_order_id("/trade/place", Some(serde_json::to_value(param).unwrap()))
+    }
+
+    pub fn trade_cancel(&self, param:CancelParam) -> RestTypedResult<()>{
+        self.post_typed_empty("/trade/cancel", Some(serde_json::to_value(param).unwrap()))
+
+    }
+
+
     
 
 
