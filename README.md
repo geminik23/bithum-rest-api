@@ -39,11 +39,14 @@ TRADE
 *  [ ] withdrawal(krw)
 
 4. Websocket API
-*  [ ] dependencies
-*  [ ] 
-*  [ ] 
-*  [ ] 
-*  [ ] 
+*  [x] dependencies
+*  [x] check, after connecting, ws still alive?
+*  [x] listener trait and base structure
+*  [ ] InnerHandler
+*  [ ] ClientRT connections
+*  [ ] ClientRT internal state: subscription.. trait
+*  [ ] ClientRT internal methods...
+*  [ ] innerRTs..
 
 ## Structures
 - Dealer
