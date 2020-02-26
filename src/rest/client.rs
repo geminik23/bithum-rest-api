@@ -68,7 +68,11 @@ impl Client{
                     }
                 },
                 200=>{
+                    let arg = body.clone();
                     if let Some(res) = body{
+                        if res.message.is_some(){
+                            return Err(RestError::BithumbError(0, arg));
+                        }
                         return Ok(res);
                     }
                 },
@@ -83,19 +87,19 @@ impl Client{
     }
 
 
-    pub fn post_typed_data<T>(&self, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<T> where T:DeserializeOwned {
+    fn post_typed_data<T>(&self, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<T> where T:DeserializeOwned {
         return self.request_typed_data::<T>(reqwest::Method::POST, endpoint, params);
     }
 
-    pub fn post_typed_order_id(&self, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<String> {
+    fn post_typed_order_id(&self, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<String> {
         return self.request_typed_order_id(reqwest::Method::POST, endpoint, params);
     }
 
-    pub fn post_typed_empty(&self, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<()> {
+    fn post_typed_empty(&self, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<()> {
         return self.request_typed_empty(reqwest::Method::POST, endpoint, params);
     }
 
-    pub fn request_typed_data<T>(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<T> where T:DeserializeOwned {
+    fn request_typed_data<T>(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<T> where T:DeserializeOwned {
         let result = self.request(method, endpoint, params);
         match result {
             Ok(res)=>{
@@ -111,7 +115,7 @@ impl Client{
         }
     }
 
-    pub fn request_typed_order_id(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<String> {
+    fn request_typed_order_id(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<String> {
         let result = self.request(method, endpoint, params);
         match result {
             Ok(res)=>{
@@ -125,7 +129,7 @@ impl Client{
         }
     }
 
-    pub fn request_typed_empty(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<()> {
+    fn request_typed_empty(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> RestTypedResult<()> {
         let result = self.request(method, endpoint, params);
         match result {
             Ok(res)=>{
@@ -137,7 +141,7 @@ impl Client{
 
 
 
-    pub fn request(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> Result<BithResponse, RestError> {
+    fn request(&self, method:reqwest::Method, endpoint:&str, params:Option<serde_json::Value>)-> Result<BithResponse, RestError> {
         let mut ourl = self.url.clone().join(endpoint).expect("failed to join endpoint");
         let _url = ourl.clone();
 
@@ -212,6 +216,60 @@ impl Client{
         // Connection Error
         Err(RestError::ConnectionError)
     }
+
+    fn result_request_pub<T>(result: Result<BithResponse, RestError>) -> RestTypedResult<T> where T:DeserializeOwned{
+        match result {
+            Ok(res)=>{
+                if let Some(data) = res.data{
+                    if let Ok(result_) = serde_json::from_value::<T>(data){
+                        return Ok(result_);
+                    }
+                }
+                error!("no data in success response");
+                return Err(RestError::JsonParseError);
+            },
+            Err(why)=>{ return Err(why)},
+        }
+    }
+
+    /// PRIVATE APIs
+    ///
+    pub fn ticker(order_currency:&str)->RestTypedResult<TickerResponse>{
+        let ep = format!("/public/ticker/{}_KRW", order_currency);
+        let result = Self::request_pub(reqwest::Method::GET, ep.as_str());
+        Self::result_request_pub(result)
+    }
+
+    pub fn tickers()->RestTypedResult<TickersResponse>{
+        let result = Self::request_pub(reqwest::Method::GET, "/public/ticker/ALL_KRW");
+        match result {
+            Ok(res)=>{
+                if let Some(data) = res.data{
+                    let mut retval = TickersResponse{
+                        tickers:TickerMap::new(),
+                        date:String::new(),
+                    };
+
+                    let map = data.as_object().unwrap();
+
+                    for (k,v) in map.into_iter(){
+                        if k == "date"{
+                            retval.date = String::from(v.as_str().unwrap());
+                            continue;
+                        }
+                        if let Ok(value) = serde_json::from_value::<TickerResponse>(v.clone()){
+                            retval.tickers.insert(String::from(k), value);
+                        }
+                    }
+                    return Ok(retval);
+                }
+                error!("no data in success response");
+                return Err(RestError::JsonParseError);
+            },
+            Err(why)=>{ return Err(why)},
+        }
+    }
+
 
 
     /// PRIVATE APIs

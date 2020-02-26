@@ -8,3 +8,4 @@ mod authenticate;
 mod model;
 
 pub mod rest;
+pub mod ws;

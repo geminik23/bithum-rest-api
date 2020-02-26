@@ -5,7 +5,8 @@ extern crate hex;
 
 use ring::{digest, hmac};
 use hex::encode as hexify;
-
+ 
+#[derive(Debug, Clone)]
 pub struct Authenticate{
     pub api:String,
     pub secret:String,

@@ -39,6 +39,11 @@ TRADE
 *  [ ] withdrawal(krw)
 
 4. Websocket API
+*  [ ] dependencies
+*  [ ] 
+*  [ ] 
+*  [ ] 
+*  [ ] 
 
 ## Structures
 - Dealer

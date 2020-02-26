@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use crate::authenticate::*;
 
+
 // use chrono::{DateTime, Utc};
 
 
@@ -16,6 +17,7 @@ pub struct BithResponse{
 
 
 
+#[derive(Clone, Debug)]
 pub struct Client{
     pub url:reqwest::Url,
     pub auth:Authenticate,
@@ -51,6 +53,36 @@ impl Default for OrderType{
 
 
 //========================================= API args
+
+//
+// PUBLIC
+
+#[derive(Clone, Debug, Deserialize)]
+pub struct TickerResponse{
+    pub opening_price:String, //number
+    pub closing_price:String, //number
+    pub min_price:String, //number
+    pub max_price:String, //number
+    pub units_traded:String, //number
+    pub acc_trade_value:String, //number
+    pub prev_closing_price:String, //number
+    pub units_traded_24H:String, //number
+    pub acc_trade_value_24H:String, //number
+    pub fluctate_24H:String, //number
+    pub fluctate_rate_24H:String, //number
+    pub date:Option<String>, //integer
+}
+
+use std::collections::HashMap;
+pub type TickerMap= HashMap<String, TickerResponse>;
+
+#[derive(Clone, Debug, Deserialize)]
+pub struct TickersResponse{
+    pub tickers:TickerMap,
+    pub date:String, //integer
+}
+
+
 
 
 //
@@ -112,7 +144,7 @@ pub struct PlaceParam{
     pub order_currency:String,
     pub payment_currency:String,
     pub units:f64,
-    pub price:u64,
+    pub price:f64,
     #[serde(rename = "type")]
     pub order_type:OrderType,
 }
