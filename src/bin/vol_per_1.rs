@@ -88,14 +88,11 @@ impl bithapi::ws::Listener for VolCalculator{
             }
             let dt = chrono::NaiveDateTime::parse_from_str(l.cont_dtm.as_str(), "%Y-%m-%d %H:%M:%S.%6f").unwrap();
             let mut cur = dt.hour();
-            if cur == 0{ cur = 24;}
 
             // comparing the time
-            let mut thour = self.info.hour;
-            if thour == 0 {thour = 24;}
-            if thour < cur{
+            if self.info.hour < cur || (self.info.hour == 23 && cur == 0){
                 self.info.volumes = 0.0;
-                self.info.hour = if cur==24 {0} else {cur};
+                self.info.hour = cur;
             }
         
             if self.info.hour == dt.hour(){
