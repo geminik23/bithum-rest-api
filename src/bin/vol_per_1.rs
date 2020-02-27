@@ -91,7 +91,9 @@ impl bithapi::ws::Listener for VolCalculator{
             if cur == 0{ cur = 24;}
 
             // comparing the time
-            if self.info.hour < cur{
+            let mut thour = self.info.hour;
+            if thour == 0 {thour = 24;}
+            if thour < cur{
                 self.info.volumes = 0.0;
                 self.info.hour = if cur==24 {0} else {cur};
             }
