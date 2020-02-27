@@ -100,7 +100,7 @@ impl bithapi::ws::Listener for VolCalculator{
                 self.info.min = dt.minute();
                 self.info.sec = dt.second();
                 self.info.nano = dt.nanosecond();
-                info!("volume : {}, Time : {}:{}:{}.{}", self.info.volumes,self.info.hour, self.info.min, self.info.sec, self.info.nano);
+                debug!("volume : {}, Time : {}:{}:{}.{}", self.info.volumes,self.info.hour, self.info.min, self.info.sec, self.info.nano);
                 if let Some(socket) = bith.sockets.get("publisher"){
                     if let Ok(msg) = serde_json::to_string(&self.info){
                         socket.send(&msg, 0).unwrap();
@@ -112,6 +112,7 @@ impl bithapi::ws::Listener for VolCalculator{
                 }
             }
         }
+        info!("received");
     }
 
     fn on_orderbook(&mut self, bith:&mut BithumbHandler, res:OrderbookdepthRes){
