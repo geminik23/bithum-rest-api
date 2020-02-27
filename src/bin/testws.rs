@@ -62,3 +62,6 @@
     //let listener = A{};
     //let _ = bithapi::ws::Connector::connect_and_run(listener);
 //}
+//
+fn main(){
+}
