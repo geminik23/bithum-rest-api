@@ -4,21 +4,13 @@ use ws::{CloseCode, OpCode, Sender, Frame, Handler, Handshake, Message, Result, 
 use super::model::*;
 use ws::util::{Token, Timeout};
 
-//impl<T:Listener> BithumbHandler for InnerHandler<T>{
-    //fn subscribe_ticker(&mut self, symbols:Vec<String>, tick_types:Option<Vec<String>>){
-    //}
-    //fn subscribe_transaction(&mut self, symbols:Vec<String>){
-    //}
-    //fn subscribe_orderbook(&mut self, symbols:Vec<String>){
-    //}
-//}
 
 impl<T:Listener> Handler for InnerHandler<T>{
 
     fn on_open(&mut self, hs: Handshake) -> Result<()> {
         // pass msg to listeners
         debug!("on open method in InnerHandler");
-        self.listener.on_opened(&self.bith_handler);
+        self.listener.on_opened(&mut self.bith_handler);
         DefaultHandler.on_open(hs)
     }
 
@@ -31,21 +23,21 @@ impl<T:Listener> Handler for InnerHandler<T>{
                 match res_.filter_type{
                     FilterType::Ticker=>{
                         if let Ok(res) = serde_json::from_value::<TickRes>(res_.content){
-                            self.listener.on_ticker(&self.bith_handler, res);
+                            self.listener.on_ticker(&mut self.bith_handler, res);
                         }else{
                             debug!("failed to parse tick");
                         }
                     },
                     FilterType::Transaction=>{
                         if let Ok(res) = serde_json::from_value::<TransactionRes>(res_.content){
-                            self.listener.on_transaction(&self.bith_handler, res);
+                            self.listener.on_transaction(&mut self.bith_handler, res);
                         }else{
                             debug!("failed to parse transaction");
                         }
                     },
                     FilterType::Orderbookdepth=>{
                         if let Ok(res) = serde_json::from_value::<OrderbookdepthRes>(res_.content){
-                            self.listener.on_orderbook(&self.bith_handler, res);
+                            self.listener.on_orderbook(&mut self.bith_handler, res);
                         }else{
                             debug!("failed to parse orderbook");
                         }
@@ -53,7 +45,7 @@ impl<T:Listener> Handler for InnerHandler<T>{
                 }
                 return Ok(());
             }else {
-                self.listener.on_request_resut(&self.bith_handler, String::from(strmsg));
+                self.listener.on_request_resut(&mut self.bith_handler, String::from(strmsg));
             }
         }
         DefaultHandler.on_message(msg)
@@ -61,7 +53,7 @@ impl<T:Listener> Handler for InnerHandler<T>{
 
     fn on_close(&mut self, code: CloseCode, reason: &str) {
         // pass msg to listeners
-        self.listener.on_close(&self.bith_handler);
+        self.listener.on_close(&mut self.bith_handler);
         
         let sender = self.out.lock().unwrap();
         debug!("closed {:?} reason: {}", code, reason);

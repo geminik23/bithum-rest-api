@@ -2,22 +2,23 @@
 
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc,Mutex};
+use std::collections::HashMap;
 
 
 pub struct BithumbHandler{
     pub out: Arc<Mutex<ws::Sender>>,
+    pub ctx:zmq::Context,
+    pub sockets: HashMap<String, zmq::Socket>,
 }
 
 impl BithumbHandler{
     pub fn subscribe_ticker(&self, symbols:Vec<String>, tick_types:Option<Vec<String>>){
-        
         let req = WSRequest{
             filter_type:FilterType::Ticker,
             symbols:symbols,
             tick_types:tick_types
         };
         if let Ok(r) = serde_json::to_string(&req){
-            debug!("subscribe ticker {:?}", r);
             self.out.lock().unwrap().send(r).unwrap();
         }
     }
@@ -151,12 +152,12 @@ pub struct OrderbookdepthRes{
 
 
 pub trait Listener{
-    fn on_opened(&mut self, bith:&BithumbHandler);
+    fn on_opened(&mut self, bith:&mut BithumbHandler);
     fn on_error(&mut self, err:&ws::Error);
-    fn on_close(&mut self, bith:&BithumbHandler);
-    fn on_request_resut(&mut self, bith:&BithumbHandler, res:String);
-    fn on_ticker(&mut self, bith:&BithumbHandler, res:TickRes);
-    fn on_transaction(&mut self, bith:&BithumbHandler, res:TransactionRes);
-    fn on_orderbook(&mut self, bith:&BithumbHandler, res:OrderbookdepthRes);
+    fn on_close(&mut self, bith:&mut BithumbHandler);
+    fn on_request_resut(&mut self, bith:&mut BithumbHandler, res:String);
+    fn on_ticker(&mut self, bith:&mut BithumbHandler, res:TickRes);
+    fn on_transaction(&mut self, bith:&mut BithumbHandler, res:TransactionRes);
+    fn on_orderbook(&mut self, bith:&mut BithumbHandler, res:OrderbookdepthRes);
 }
 

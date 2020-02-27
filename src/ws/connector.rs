@@ -6,16 +6,18 @@ const URL:&'static str = "wss://pubwss.bithumb.com/pub/ws";
 
 
 impl Connector{
-    pub fn connect_and_run<T:Listener+Copy>(listener:T){
-        debug!("connecting...");
 
+    pub fn connect_and_run<T:Listener+Copy>(listener:T){
         ws::connect(URL, move |out| {
             // sender
             let sender = Arc::new(Mutex::new(out));
+            let ctx = zmq::Context::new();
 
             // initilaize the bithumb handler
             let bhandler = BithumbHandler{
                 out : sender.clone(),
+                ctx : ctx,
+                sockets: std::collections::HashMap::new(),
             };
 
             // return handler
@@ -27,6 +29,7 @@ impl Connector{
 
         }).unwrap();
     }
+
 }
 
 

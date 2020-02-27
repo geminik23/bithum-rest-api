@@ -133,12 +133,8 @@ pub struct OrderResponse{
 
 pub type OrdersResponse = Vec<OrderResponse>;
 
-
-
 //
 // TRADE
-
-
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct PlaceParam{
     pub order_currency:String,
