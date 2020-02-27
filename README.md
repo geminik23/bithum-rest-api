@@ -42,11 +42,13 @@ TRADE
 *  [x] dependencies
 *  [x] check, after connecting, ws still alive?
 *  [x] listener trait and base structure
-*  [ ] InnerHandler
-*  [ ] ClientRT connections
-*  [ ] ClientRT internal state: subscription.. trait
-*  [ ] ClientRT internal methods...
-*  [ ] innerRTs..
+*  [x] InnerHandler
+*  [x] connection test
+*  [x] Bith Handler ticker and transaction and orderbook
+*  [x] transaction
+*  [ ] ticker
+*  [ ] orderbook
+*  [ ] zmq
 
 ## Structures
 - Dealer

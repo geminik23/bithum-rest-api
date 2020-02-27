@@ -1,5 +1,9 @@
 
+extern crate ws;
 mod model;
-mod client;
+mod connector;
+mod innerhandler;
 
 pub use self::model::*;
+
+
