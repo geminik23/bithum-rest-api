@@ -56,28 +56,28 @@ pub struct InnerHandler<T: Listener>{
 }
 
 
-const RES_MSG_CONNECTED:&'static str="Connected Successfully";
-const RES_MSG_SUCCESS_FILTER:&'static str="Filter Registered Successfully";
-const RES_MSG_FAILED_FILTER:&'static str="Invalid Filter Syntax";
+//const RES_MSG_CONNECTED:&'static str="Connected Successfully";
+//const RES_MSG_SUCCESS_FILTER:&'static str="Filter Registered Successfully";
+//const RES_MSG_FAILED_FILTER:&'static str="Invalid Filter Syntax";
 
-#[derive(Clone, Debug)]
-pub enum ReqResult{
-    Connected,
-    SuccessfullyRegistered,
-    InvalidFilterSyntax,
-}
+//#[derive(Clone, Debug)]
+//pub enum ReqResult{
+    //Connected,
+    //SuccessfullyRegistered,
+    //InvalidFilterSyntax,
+//}
 
-#[derive(Clone, Deserialize, Debug)]
-pub struct WSResultResponseT{
-    pub status:String,
-    pub resmsg:String,
-}
+//#[derive(Clone, Deserialize, Debug)]
+//pub struct WSResultResponseT{
+    //pub status:String,
+    //pub resmsg:String,
+//}
 
-#[derive(Clone, Debug)]
-pub struct WSResultResponse{
-    pub status:String,
-    pub res:ReqResult,
-}
+//#[derive(Clone, Debug)]
+//pub struct WSResultResponse{
+    //pub status:String,
+    //pub res:ReqResult,
+//}
 
 #[derive(Clone, Serialize, Debug, Deserialize)]
 pub enum FilterType{

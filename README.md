@@ -46,9 +46,9 @@ TRADE
 *  [x] connection test
 *  [x] Bith Handler ticker and transaction and orderbook
 *  [x] transaction
-*  [ ] ticker
-*  [ ] orderbook
-*  [ ] zmq
+*  [ ] ticker ... request error
+*  [x] orderbook
+*  [ ] zmq pub server for one app
 
 ## Structures
 - Dealer

@@ -13,7 +13,7 @@ use ws::util::{Token, Timeout};
     //}
 //}
 
-impl<T:Listener+Copy> Handler for InnerHandler<T>{
+impl<T:Listener> Handler for InnerHandler<T>{
 
     fn on_open(&mut self, hs: Handshake) -> Result<()> {
         // pass msg to listeners
@@ -96,8 +96,6 @@ impl<T:Listener+Copy> Handler for InnerHandler<T>{
         }
         DefaultHandler.on_frame(frame)
     }
-    
-
 
 }
 
