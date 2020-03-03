@@ -24,7 +24,6 @@ fn main(){
     print!("Please enter some text: ");
     std::io::stdin().read_line(&mut s).expect("Did not enter a correct string");
 
-
     println!("{:?}", chrono::Utc::now());
     for _ in 0..n_jobs{
         let c = client.clone();

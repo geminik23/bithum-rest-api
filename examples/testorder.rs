@@ -9,7 +9,6 @@ use bithapi::*;
 fn main(){
     let _ = dotenv::dotenv();
     env_logger::init();
-    
 
     // let res = order_client.request(reqwest::Method::GET, "public/ticker/ALL_KRW");
     let res = bithapi::rest::Client::request_pub(reqwest::Method::GET, "public/ticker/ALL_KRW");
@@ -18,7 +17,6 @@ fn main(){
     }
 
     let client = bithapi::rest::Client::new( std::env::var("BITHUMB_API").unwrap().as_str(), std::env::var("BITHUMB_SECRET").unwrap().as_str());
-
 
     // manual ***** removed pub
     // let res = client.request(reqwest::Method::POST, "/info/balance", Some(json!({"currency":"XMR"})));
@@ -48,10 +46,6 @@ fn main(){
             }
         }
     }
-    
-
-
-
 
     //::::::::::::PRIVATE
 
@@ -85,12 +79,4 @@ fn main(){
     //     });
     //     info!("{:?}", res);
     // }
-
-
-
-
-
-
-    
-
 }

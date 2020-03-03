@@ -232,7 +232,7 @@ impl Client{
         }
     }
 
-    /// PRIVATE APIs
+    /// PUBLIC APIs
     ///
     pub fn ticker(order_currency:&str)->RestTypedResult<TickerResponse>{
         let ep = format!("/public/ticker/{}_KRW", order_currency);

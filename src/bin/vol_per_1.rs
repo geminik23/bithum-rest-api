@@ -84,7 +84,7 @@ impl bithapi::ws::Listener for VolCalculator{
         // cumulate the all volumes
         for l in res.list.iter(){
             if let Ok(amount)= res.list[0].cont_amt.parse::<f64>(){
-                self.info.volumes += amount;
+                self.info.volumes += amount*2.0;
             }
             let dt = chrono::NaiveDateTime::parse_from_str(l.cont_dtm.as_str(), "%Y-%m-%d %H:%M:%S.%6f").unwrap();
             let mut cur = dt.hour();
@@ -125,7 +125,6 @@ impl bithapi::ws::Listener for VolCalculator{
 fn main(){
     let _ = dotenv::dotenv();
     env_logger::init();
-
 
     let vol = VolCalculator::new();
     let _ = bithapi::ws::Connector::connect_and_run(vol);
