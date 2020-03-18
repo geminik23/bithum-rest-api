@@ -58,6 +58,7 @@ pub struct WorkerResponse{
 
 
 fn main(){
+
     let _ = dotenv::dotenv();
     env_logger::init();
 

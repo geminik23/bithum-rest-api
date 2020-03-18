@@ -29,6 +29,8 @@ ws = {version="*", features=["ssl"]}
 tokio = "0.1"
 futures = "0.1"
 
+
 # for test
 threadpool="1.7"
 zmq = "0.9"
+actix = "0.10.0-alpha.1"
