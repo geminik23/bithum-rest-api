@@ -50,6 +50,14 @@ TRADE
 *  [x] orderbook
 *  [ ] zmq pub server for one app
 
+5. BITHSERVER
+*  [x] Worker -> seperate Model
+*  [x] adding ops -> WorkerCount
+*  [x] response
+*  [x] matching msg
+ 
+
+
 ## Structures
 - Dealer
 - Router

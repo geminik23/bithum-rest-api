@@ -16,12 +16,24 @@ use std::process::{Command, Stdio, Child};
 // 39010 39011
 
 
-// TODO
-// 1. Worker -> seperate Model
-// 2. adding ops -> WorkerCount
-// 3. response
-// 4. matching msg
-// 5. 
+#[derive(Clone, Debug, Deserialize)]
+pub enum ReqOp{
+    Ping,
+    WorkerCount,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+pub struct ReqParam{
+    pub op:ReqOp,
+    pub arg:i32,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct ResParam{
+    pub success:bool,
+    pub arg:i32,
+}
+
 
 
 
@@ -36,10 +48,11 @@ fn main(){
     let rep = ctx.socket(zmq::REP).unwrap();
     let ep = "tcp://*:39991";
     rep.bind(ep).expect("Failed to binding endpoint");
+    info!("server zmq rep socket : {}", ep);
 
     // broker
     let wport = 39011;
-    let wep_server = format!("tcp//*:{}", wport);
+    let wep_server = format!("tcp://*:{}", wport);
     let wep_client = format!("tcp://127.0.0.1:{}", wport);
     let mut bw = BrokerOfWorkers::new("tcp://*:39010",&wep_server);
     let w = std::thread::spawn(move||{
@@ -52,6 +65,7 @@ fn main(){
     let mut children:Vec<Child> = Vec::new();
 
     // loop for REP
+    
     loop{
         let mut items = [
             rep.as_poll_item(zmq::POLLIN),
@@ -60,26 +74,47 @@ fn main(){
 
         if items[0].is_readable() {
             if let Ok(message) = rep.recv_msg(0){
-                // rep
-                // TODO check ops
-                //
-                //
-                //
-                let count = 1;
-                { // set new count
-                    for child in children.iter_mut(){
-                        child.kill().expect("!kill");
+                let msgstr = message.as_str().expect("failed to convert string from message(zmq)");
+                let mut response = ResParam{
+                    success:false,
+                    arg:-1,
+                };
+                
+                if let Ok(req) = serde_json::from_str::<ReqParam>(msgstr){
+                    info!("received param : {:?}", req);
+                    match req.op{
+                        ReqOp::Ping=>{
+                            response.success = true;
+                        },
+                        ReqOp::WorkerCount=>{
+                            if req.arg == -1 { // set new count
+                                info!("count query : {}", children.len() as i32);
+                                response.success = true;
+                                response.arg = children.len() as i32;
+                            }else if req.arg > -1{
+                                info!("change the worker count to {}", req.arg);
+                                response.success = true;
+                                for child in children.iter_mut(){
+                                    child.kill().expect("!kill");
+                                }
+                                std::thread::sleep(std::time::Duration::from_secs_f64(1.5));
+                                children.clear();
+                                for i in 0..req.arg{
+                                    let child = Command::new("./bithworker")
+                                        .arg(&wep_client)
+                                        .spawn()
+                                        .expect("Failed to execute worker");
+                                    children.push(child);
+                                }
+                                response.arg = req.arg;
+                                
+                            }
+                        }
                     }
-                    std::thread::sleep(std::time::Duration::from_secs_f64(1.5));
-                    children.clear();
-                    for i in 0..count{
-                        let child = Command::new("./bithworker")
-                            .arg(&wep_client)
-                            .spawn()
-                            .expect("Failed to execute worker");
-                        children.push(child);
-                    }
-
+                }
+                // send reply
+                if let Ok(repstr) = serde_json::to_string(&response){
+                    rep.send_str(&repstr, 0).unwrap();
                 }
                 
             }else{
