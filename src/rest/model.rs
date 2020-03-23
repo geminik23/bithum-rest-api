@@ -146,6 +146,18 @@ pub struct PlaceParam{
 }
 
 #[derive(Clone, Debug, Serialize, Default)]
+pub struct PlaceIParam{
+    pub order_currency:String,
+    pub payment_currency:String,
+    pub units:f64,
+    pub price:i64,
+    #[serde(rename = "type")]
+    pub order_type:OrderType,
+}
+
+
+
+#[derive(Clone, Debug, Serialize, Default)]
 pub struct CancelParam{
     #[serde(rename = "type")]
     pub order_type:OrderType,

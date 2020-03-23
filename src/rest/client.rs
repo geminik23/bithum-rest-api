@@ -283,7 +283,20 @@ impl Client{
     }
 
     pub fn trade_place(&self, param:PlaceParam)-> RestTypedResult<String>{
-        self.post_typed_order_id("/trade/place", Some(serde_json::to_value(param).unwrap()))
+        let mut v:Value = Value::Null;
+        if param.price.fract() == 0.0{
+            let iparam = PlaceIParam{
+                order_currency:param.order_currency,
+                payment_currency:param.payment_currency,
+                units:param.units,
+                price:param.price as i64,
+                order_type : param.order_type,
+            };
+            v = serde_json::to_value(iparam).unwrap();
+        }else{
+            v = serde_json::to_value(param).unwrap();
+        }
+        self.post_typed_order_id("/trade/place", Some(v))
     }
 
     pub fn trade_cancel(&self, param:CancelParam) -> RestTypedResult<()>{

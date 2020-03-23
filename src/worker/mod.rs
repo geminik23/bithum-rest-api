@@ -13,6 +13,7 @@ pub struct Param{
     pub order_type:super::rest::OrderType,
 }
 
+
 #[derive(Clone, Debug, Deserialize)]
 pub enum RequestOp{
     Ping,
