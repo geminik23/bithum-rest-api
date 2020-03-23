@@ -75,6 +75,7 @@ fn main(){
                                     price:param.price,
                                     order_type:param.order_type,
                                 });
+                                info!("{:?}", orderres);
 
                                 if orderres.is_ok(){
                                     response.success = true;
