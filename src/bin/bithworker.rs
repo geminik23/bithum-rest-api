@@ -67,25 +67,24 @@ fn main(){
                         if let Some(reqarg) = req.arg{
                             if let Ok(param) = serde_json::from_value::<Param>(reqarg){
                                 // response...
-                                for i in 0..2{
-                                    let client = bithapi::rest::Client::new(&param.api, &param.secret);
-                                    let orderres = client.trade_place(bithapi::rest::PlaceParam{
-                                        order_currency:param.order_symbol.clone(),
-                                        payment_currency:param.payment_symbol.clone(),
-                                        units:param.units,
-                                        price:param.price,
-                                        order_type:param.order_type,
-                                    });
+                                let client = bithapi::rest::Client::new(&param.api, &param.secret);
+                                let orderres = client.trade_place(bithapi::rest::PlaceParam{
+                                    order_currency:param.order_symbol.clone(),
+                                    payment_currency:param.payment_symbol.clone(),
+                                    units:param.units,
+                                    price:param.price,
+                                    order_type:param.order_type,
+                                });
 
-                                    if orderres.is_ok(){
-                                        response.success = true;
-                                        let orderid = orderres.unwrap();
-                                        response.arg = Some(orderid);
-                                        break;
-                                    }else{
-                                        //response.message = Some(format!("{}, {}", param.units, param.price));
-                                        response.message = Some(String::from("Order Failed"));
-                                    }
+                                if orderres.is_ok(){
+                                    response.success = true;
+                                    let orderid = orderres.unwrap();
+                                    response.arg = Some(orderid);
+                                    break;
+                                }else{
+                                    //response.message = Some(format!("{}, {}", param.units, param.price));
+                                    //response.message = Some(String::from("Order Failed"));
+                                    response.message = Some(format!("{:?}", orderres));
                                 }
                             }else{
                                 response.message = Some(String::from("Invalid parameter"));
