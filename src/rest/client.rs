@@ -40,13 +40,13 @@ impl Client{
     pub fn request_pub(method:reqwest::Method, endpoint:&str)-> Result<BithResponse, RestError>{
         let ourl = reqwest::Url::parse(URL).unwrap().join(endpoint).expect("failed to join endpoint");
 
-        let client  = reqwest::blocking::Client::new();
+        let client  = reqwest::Client::new();
 
-        if let Ok(response) = client.request(method, ourl)
+        if let Ok(mut response) = client.request(method, ourl)
         // .body()
         .send(){
-            let code = response.status().as_u16();
             let mut body :Option<BithResponse> = None;
+            //if let Ok(res) = response.json::<serde_json::Value>(){
             if let Ok(res) = response.json::<serde_json::Value>(){
                 let result = serde_json::from_value::<BithResponse>(res);
                 if result.is_ok(){
@@ -57,6 +57,7 @@ impl Client{
             }else{
                 return Err(RestError::JsonParseError);
             }
+            let code = response.status().as_u16();
             match code{
                 code if code >=400 =>{
                     match code{
@@ -154,7 +155,7 @@ impl Client{
             }
         }
 
-        let client  = reqwest::blocking::Client::new();
+        let client  = reqwest::Client::new();
         // self.auth.signature();
 
         let nonce = chrono::Utc::now().timestamp_millis();
@@ -168,8 +169,8 @@ impl Client{
 
 
 
-        if let Ok(response) = client.request(method, _url)
-        .body(reqwest::blocking::Body::from(query))
+        if let Ok(mut response) = client.request(method, _url)
+        .body(reqwest::Body::from(query))
         .header("Api-Key", self.auth.api.as_str())
         .header("Api-Sign", sign.as_str())
         .header("Api-Nonce", format!("{}",nonce).as_str())
@@ -178,6 +179,7 @@ impl Client{
         .send(){
             let code = response.status().as_u16();
             let mut body :Option<BithResponse> = None;
+            //if let Ok(res) = response.json::<serde_json::Value>(){
             if let Ok(res) = response.json::<serde_json::Value>(){
                 let result = serde_json::from_value::<BithResponse>(res);
                 if result.is_ok(){

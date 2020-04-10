@@ -21,7 +21,8 @@ chrono = { version = "0.4", features = ["serde"] }
 ring = "0.13"
 hex = "0.3"
 
-reqwest ={version="0.10", features=["json", "blocking"]}
+#reqwest ={version="0.10", features=["json", "blocking"]}
+reqwest = {version="0.9"}
 
 
 ws = {version="*", features=["ssl"]}
