@@ -36,16 +36,16 @@ fn main(){
     // let res = bithapi::rest::Client::tickers();
     // info!("{:?}", res.unwrap());
 
-    {/// ticker loop
-        for i in 0..5{
-                println!("start utc {}",chrono::Utc::now().timestamp_millis());
-            let res = bithapi::rest::Client::ticker("BTC");
-            if let Ok(tick) = res{
-                println!("{:?}",tick.date);
-                println!("end utc {}\n",chrono::Utc::now().timestamp_millis());
-            }
-        }
-    }
+    //{/// ticker loop
+        //for i in 0..5{
+                //println!("start utc {}",chrono::Utc::now().timestamp_millis());
+            //let res = bithapi::rest::Client::ticker("BTC");
+            //if let Ok(tick) = res{
+                //println!("{:?}",tick.date);
+                //println!("end utc {}\n",chrono::Utc::now().timestamp_millis());
+            //}
+        //}
+    //}
 
     //::::::::::::PRIVATE
 
@@ -60,23 +60,24 @@ fn main(){
 
     
     //////////////TRADE
-    // place
-    // let order_type = rest::OrderType::Bid;
-    // let res = client.trade_place(rest::PlaceParam{
-    //     order_currency:String::from("XMR"),
-    //     payment_currency:String::from("KRW"),
-    //     units:0.008,
-    //     price:91000.0,
-    //     order_type:order_type,
-    // });
-    // if let Ok(id) = res{ // cancel
-    //     info!("ordered : {}", id);
-    //     let res = client.trade_cancel(rest::CancelParam{
-    //         order_currency:String::from("XMR"),
-    //         payment_currency:String::from("KRW"),
-    //         order_type:order_type,
-    //         order_id:id,
-    //     });
-    //     info!("{:?}", res);
-    // }
+     //place
+     let order_type = rest::OrderType::Bid;
+     let res = client.trade_place(rest::PlaceParam{
+         order_currency:String::from("HC"),
+         payment_currency:String::from("KRW"),
+         units:0.5,
+         price:1199f64,
+         order_type:order_type,
+     });
+     info!("{:?}", res);
+     //if let Ok(id) = res{ // cancel
+         //info!("ordered : {}", id);
+         //let res = client.trade_cancel(rest::CancelParam{
+             //order_currency:String::from("XMR"),
+             //payment_currency:String::from("KRW"),
+             //order_type:order_type,
+             //order_id:id,
+         //});
+         //info!("{:?}", res);
+     //}
 }

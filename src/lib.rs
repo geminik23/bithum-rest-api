@@ -7,6 +7,7 @@ extern crate anyhow;
 
 mod authenticate;
 
+pub mod worker;
 pub mod rest;
 pub mod ws;
 
