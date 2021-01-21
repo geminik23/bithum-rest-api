@@ -1,22 +1,29 @@
-#[macro_use] extern crate log;
-extern crate env_logger;
+#[macro_use]
+extern crate log;
 extern crate dotenv;
-#[macro_use] extern crate serde_json;
-
+extern crate env_logger;
+#[macro_use]
+extern crate serde_json;
 
 use bithapi::*;
 
-fn main(){
+fn main() {
     let _ = dotenv::dotenv();
     env_logger::init();
 
     // let res = order_client.request(reqwest::Method::GET, "public/ticker/ALL_KRW");
     let res = bithapi::rest::Client::request_pub(reqwest::Method::GET, "public/ticker/ALL_KRW");
-    if res.is_ok(){
-        info!("PUBLIC API the status code of response : {:?}", res.unwrap().status);
+    if res.is_ok() {
+        info!(
+            "PUBLIC API the status code of response : {:?}",
+            res.unwrap().status
+        );
     }
 
-    let client = bithapi::rest::Client::new( std::env::var("BITHUMB_API").unwrap().as_str(), std::env::var("BITHUMB_SECRET").unwrap().as_str());
+    let client = bithapi::rest::Client::new(
+        std::env::var("BITHUMB_API").unwrap().as_str(),
+        std::env::var("BITHUMB_SECRET").unwrap().as_str(),
+    );
 
     // manual ***** removed pub
     // let res = client.request(reqwest::Method::POST, "/info/balance", Some(json!({"currency":"XMR"})));
@@ -37,14 +44,14 @@ fn main(){
     // info!("{:?}", res.unwrap());
 
     //{/// ticker loop
-        //for i in 0..5{
-                //println!("start utc {}",chrono::Utc::now().timestamp_millis());
-            //let res = bithapi::rest::Client::ticker("BTC");
-            //if let Ok(tick) = res{
-                //println!("{:?}",tick.date);
-                //println!("end utc {}\n",chrono::Utc::now().timestamp_millis());
-            //}
-        //}
+    //for i in 0..5{
+    //println!("start utc {}",chrono::Utc::now().timestamp_millis());
+    //let res = bithapi::rest::Client::ticker("BTC");
+    //if let Ok(tick) = res{
+    //println!("{:?}",tick.date);
+    //println!("end utc {}\n",chrono::Utc::now().timestamp_millis());
+    //}
+    //}
     //}
 
     //::::::::::::PRIVATE
@@ -58,26 +65,25 @@ fn main(){
     // let res = client.orders(rest::OrdersParam{order_currency:String::from("XMR"), ..Default::default()});
     // info!("{:?}", res);
 
-    
     //////////////TRADE
-     //place
-     let order_type = rest::OrderType::Bid;
-     let res = client.trade_place(rest::PlaceParam{
-         order_currency:String::from("HC"),
-         payment_currency:String::from("KRW"),
-         units:0.5,
-         price:1199f64,
-         order_type:order_type,
-     });
-     info!("{:?}", res);
-     //if let Ok(id) = res{ // cancel
-         //info!("ordered : {}", id);
-         //let res = client.trade_cancel(rest::CancelParam{
-             //order_currency:String::from("XMR"),
-             //payment_currency:String::from("KRW"),
-             //order_type:order_type,
-             //order_id:id,
-         //});
-         //info!("{:?}", res);
-     //}
+    //place
+    let order_type = rest::OrderType::Bid;
+    let res = client.trade_place(rest::PlaceParam {
+        order_currency: String::from("HC"),
+        payment_currency: String::from("KRW"),
+        units: 0.5,
+        price: 1199f64,
+        order_type: order_type,
+    });
+    info!("{:?}", res);
+    //if let Ok(id) = res{ // cancel
+    //info!("ordered : {}", id);
+    //let res = client.trade_cancel(rest::CancelParam{
+    //order_currency:String::from("XMR"),
+    //payment_currency:String::from("KRW"),
+    //order_type:order_type,
+    //order_id:id,
+    //});
+    //info!("{:?}", res);
+    //}
 }
